@@ -1,0 +1,25 @@
+{
+  "name": "jsbuild",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/main/index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "bin": {
+    "jsbuild": "index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "antlr4": "^4.5.2",
+    "co": "^4.6.0",
+    "colors": "^1.1.2",
+    "globby": "^4.0.0",
+    "gulp": "^3.9.1",
+    "lodash": "^4.3.0",
+    "mz": "^2.3.1",
+    "yargs": "^3.32.0"
+  }
+}
