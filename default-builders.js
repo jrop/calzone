@@ -1,5 +1,6 @@
 'use strict'
 
+const colors = require('colors')
 const path = require('path')
 const _ = require('lodash')
 
@@ -15,22 +16,13 @@ function pipeFactory(name) {
 }
 
 function webpack(config) {
-	try {
-		const dirConf = require(path.join(process.cwd(), 'webpack.config.js'))
-		config = _.merge(config, dirConf)
-	} catch (e) {
-		console.log('Counldn\'t load local webpack.config.js')
-	}
+	try { config = _.merge(config, require(path.join(process.cwd(), 'webpack.config.js'))) }
+	catch (e) { console.log('Counldn\'t load local webpack.config.js'.yellow) }
 
-	let named = null
-	try { named = rqr('vinyl-named') } catch (e) { }
-
+	const named = rqr('vinyl-named')
 	const webpack = rqr('gulp-webpack')
-	if (named)
-		return this.pipe(named())
-			.pipe(webpack(config))
-	else
-		return this.pipe(webpack(config))
+	return this.pipe(named())
+		.pipe(webpack(_.merge({ quiet: true }, config)))
 }
 
 module.exports = {

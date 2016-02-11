@@ -3,7 +3,9 @@
 require('colors')
 
 const annotation = require('./annotation-parser')
+const chokidar = require('chokidar')
 const co = require('co')
+const events = require('events')
 const globby = require('globby')
 const gulp = require('gulp')
 const joi = require('joi')
@@ -12,6 +14,29 @@ const path = require('path')
 const through2 = require('through2')
 const stream = require('stream')
 const _ = require('lodash')
+
+//
+// Utility to return various paths of interest for a given file
+//
+function getPathInfo(options, file) {
+	const fileUnderSrc = path.relative(options.src, file)
+	return {
+		file: path.relative(process.cwd(), file), // src/index.js
+		name: fileUnderSrc,                       // index.js
+		src: file,                                // /full/path/to/index.js
+		dst: path.dirname(path.join(options.out, fileUnderSrc)), // /full/path/to/build/ [without index.js]
+		dstFile: path.join(options.out, fileUnderSrc), // /fule/path/to/build/index.js
+	}
+}
+
+//
+// Returns globs from the passed options
+//
+function getGlobsFromOptions(options) {
+	return [ '**/*.*', '**/.*' ]
+		.map(g => path.join(options.src, g))
+		.concat(options.exclude.map(e => '!' + e))
+}
 
 //
 // Stream version of noop
@@ -71,13 +96,15 @@ function getBuildConfig(options, file, contents) {
 //
 // Creates the build pipe for the file and awaits it
 //
-const waitForBuildPipe = co.wrap(function * (options, file, contents, src, dst, niceName) {
+const waitForBuildPipe = co.wrap(function * (options, contents, src, dst, niceName) {
 	let buildConfig = null
 	try {
-		buildConfig = yield getBuildConfig(options, file, contents)
+		buildConfig = yield getBuildConfig(options, src, contents)
 	} catch (e) {
-		throw new Error('Could not read build config for file "' + file + '": ' + e.message)
+		throw new Error('Could not read build config for file "' + src + '": ' + e.message)
 	}
+
+	const emitter = new events.EventEmitter()
 
 	try {
 		if (buildConfig) {
@@ -94,47 +121,75 @@ const waitForBuildPipe = co.wrap(function * (options, file, contents, src, dst, 
 				}
 
 				pipe = nextPipe //pipe.pipe(nextPipe)
+				pipe.on('error', e => emitter.emit('error', e))
 			}
 			pipe = pipe.pipe(gulp.dest(dst))
-			return streamToPromise(pipe)
-				.then(() => console.log(niceName.cyan, 'built'.green))
+			pipe.on('end', () => {
+				console.log(niceName.cyan, 'built'.green)
+				emitter.emit('end')
+			})
 		} else if (options.includeAll) {
-			console.log(niceName.cyan, 'copied'.blue)
-			return streamToPromise(gulp.src(src).pipe(gulp.dest(dst)))
+			gulp.src(src).pipe(gulp.dest(dst)).on('end', () => {
+				console.log(niceName.cyan, 'copied'.blue)
+				emitter.emit('end')
+			})
 		} else {
 			// skip file
 			console.log(niceName.cyan, 'skipped'.yellow)
+			emitter.emit('end')
 		}
 	} catch (e) {
 		throw new Error('Error building file: "' + niceName + '": InnerException: ' + e.stack)
 	}
+
+	return streamToPromise(emitter)
 })
 
 //
 // Kicks off building a file
 //
 const buildFile = co.wrap(function * (options, file) {
-	const fileNice = path.relative(process.cwd(), file)
-	const fileRelativeToSrc = path.relative(options.src, file)
-	const src = file
-	const dst = path.dirname(path.join(options.out, fileRelativeToSrc))
-
+	const pathInfo = getPathInfo(options, file)
 	const contents = (yield fs.readFile(file)).toString()
-	yield waitForBuildPipe(options, file, contents, src, dst, fileNice)
+	yield waitForBuildPipe(options, contents, file, pathInfo.dst, pathInfo.file)
 })
+
+//
+// Removes a file from the build directory
+//
+const unbuildFile = co.wrap(function * (options, file) {
+	const pathInfo = getPathInfo(options, file)
+	console.log(pathInfo.file.cyan, 'deleted'.red)
+	yield fs.unlink(pathInfo.dstFile)
+})
+
+// console.log(_.functionsIn(fs))
 
 module.exports = function builder(options) {
 	const lib = {
 		watch() {
-			throw new Error('watch is not yet implemented')
+			function make(f) {
+				buildFile(options, f)
+					// .then(() => console.log('done'.green, 'with', f))
+					.catch(e => {
+						if (e.codeFrame)
+							console.error(e.message + '\n' + e.codeFrame)
+						else if (e.stack)
+							console.error(e.stack.red)
+						else
+							console.error(e)
+					})
+			}
+
+			const watcher = chokidar.watch(getGlobsFromOptions(options))
+				// .on('all', (e, f) => console.log(e, f))
+				.on('add', make)
+				.on('change', make)
+				.on('unlink', f => unbuildFile(options, f))
 		},
 
 		run: co.wrap(function * () {
-			const globs = [ '**/*.*', '**/.*' ]
-				.map(g => path.join(options.src, g))
-				.concat(options.exclude.map(e => '!' + e))
-
-			const files = yield globby(globs)
+			const files = yield globby(getGlobsFromOptions(options))
 			yield Promise.all(files.map(f => buildFile(options, f)))
 		})
 	}

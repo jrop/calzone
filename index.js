@@ -15,6 +15,9 @@ function loadLocalFile(f) {
 }
 
 const argv = yargs.help('help').alias('help', 'h')
+
+	.version(require('./package.json').version).alias('version', 'v')
+
 	.option('config-file', {
 		description: 'The config file to read from',
 		type: 'string',

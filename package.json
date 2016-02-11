@@ -1,5 +1,5 @@
 {
-  "name": "jsbuild",
+  "name": "construction-zone",
   "version": "1.0.0",
   "description": "",
   "main": "build/main/index.js",
@@ -7,13 +7,14 @@
     "test": "gulp test"
   },
   "bin": {
-    "jsbuild": "index.js"
+    "cz": "index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "antlr4": "^4.5.2",
+    "chokidar": "^1.4.2",
     "co": "^4.6.0",
     "colors": "^1.1.2",
     "globby": "^4.0.0",
