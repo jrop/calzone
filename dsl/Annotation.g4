@@ -12,7 +12,7 @@ buildSpec: ID | ID '(' jsonLiteral? ')';
 /* BEGIN: JSON stuffs: */
 
 jsonObject: '{' (jsonKeyValue ',')* (jsonKeyValue ','?)? '}';
-jsonKeyValue: String ':' jsonLiteral;
+jsonKeyValue: String ':' jsonLiteral | ID ':' jsonLiteral;
 jsonArray: '[' (jsonLiteral ',')* (jsonLiteral ','?)? ']';
 jsonLiteral: jsonObject | jsonArray | Boolean | Number | String | SString;
 
@@ -32,7 +32,7 @@ SString: '\'' SStringCharacters? '\'';
 fragment SStringCharacters: SStringCharacter+;
 fragment SStringCharacter: ~['] | EscapeSequence;
 
-ID: [A-Za-z0-9]+;
+ID: [$_A-Za-z]+[$_A-Za-z0-9]*;
 
 COMMENT: '/*' .*? '*/' -> skip;
 LINE_COMMENT: '//' ~[\r\n]* -> skip;

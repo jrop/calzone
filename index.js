@@ -56,7 +56,17 @@ const options = _.merge({
 	includeAll: true,
 	exclude: [ 'node_modules' ]
 }, loadLocalFile(argv.config), _.pick(argv, 'src', 'out', 'includeAll', 'exclude'))
-options.builders = loadLocalFile('builders.js')
+
+// load builders:
+options.builders = _.merge(require('./default-builders'), loadLocalFile('.builders.js'))
+options.builders.json = _.mapKeys(loadLocalFile('.builders.json'), (value, file) => {
+	return path.resolve(process.cwd(), file)
+})
+
+// normalize paths:
+options.src = path.resolve(process.cwd(), options.src)
+options.out = path.resolve(process.cwd(), options.out)
+options.exclude = options.exclude.map(e => path.resolve(process.cwd(), e))
 
 const b = builder(options)
 if (argv.watch)

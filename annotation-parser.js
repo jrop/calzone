@@ -5,6 +5,7 @@ const AnnotationLexer = require('./dsl/js/build/AnnotationLexer').AnnotationLexe
 const AnnotationParser = require('./dsl/js/build/AnnotationParser').AnnotationParser
 const AnnotationVisitor = require('./dsl/js/build/AnnotationVisitor').AnnotationVisitor
 const TerminalNode = require('antlr4/tree/Tree').TerminalNode
+const _ = require('lodash')
 
 function visit(ctx, visitors) {
 	const parser = ctx.parser
@@ -62,7 +63,31 @@ module.exports.parse = function (source) {
 		},
 
 		jsonLiteral() {
-			return JSON.parse(this.getText())
+			return this.visit(this.children[0])
+			// console.log(this.getText(), this.children)
+			// return JSON.parse(this.getText())
+		},
+
+		jsonObject() {
+			// trim out '{', ',', and '}' tokens
+			let keyValues = this.children.filter(e => [ '{', ',', '}' ].indexOf(e.getText()) == -1)
+			keyValues = keyValues.map(kv => this.visit(kv))
+			return _.assign.apply(_, keyValues)
+		},
+
+		jsonArray() {
+			// trim out '[', ',', and ']' tokens
+			const elements = this.children.filter(e => [ '[', ',', ']'  ].indexOf(e.getText()) == -1)
+			return elements.map(e => eval(this.visit(e)))
+		},
+
+		jsonKeyValue() {
+			const obj = { }
+			const name = this.visit(this.children[0])
+			let value = eval(this.visit(this.children[2]))
+
+			obj[_.trim(name, '"\'')] = value
+			return obj
 		}
 	})
 }
