@@ -1,0 +1,6 @@
+{
+	"includeAll": false,
+	"builders": {
+		"src/index.hbs": [ { "type": "hb" } ]
+	}
+}

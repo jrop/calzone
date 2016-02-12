@@ -1,0 +1,25 @@
+{
+  "name": "calzone",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".builders.js",
+  "dependencies": {
+    "gulp-hb": "^2.6.5",
+    "gulp-rename": "^1.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrop/calzone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jrop/calzone/issues"
+  },
+  "homepage": "https://github.com/jrop/calzone#readme"
+}
