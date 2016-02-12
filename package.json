@@ -5,7 +5,7 @@
   "main": "build/main/index.js",
   "scripts": {
     "test": "mocha",
-    "coverage": "istanbul cover _mocha",
+    "coverage": "istanbul cover _mocha -x 'dsl/**/*.*'",
     "prepublish": "cd dsl && make"
   },
   "bin": {
