@@ -13,7 +13,7 @@ npm install -g calzone
 
 This will expose a command-line utility that can be run with:
 ```
-$ conz --help # for example...
+$ calzone --help # for example...
 ```
 
 ## Overview
@@ -55,7 +55,6 @@ async function main() {
 	console.log('Done.')
 }
 main()
-
 ```
 
 First, you'll notice that our file declaratively defines how it is intended to be built with the `@build` annotation build-hint.  In this example, we declare that our file should be piped through two **builders**: `babel` and `uglify`.  Piping is designated using the pipe-operator `|>`.  Furthermore, configuration data can be passed to each builder as is seen with passing `{ preserveComments: false}` to the `uglify` builder.
