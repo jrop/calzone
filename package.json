@@ -1,13 +1,13 @@
 {
-  "name": "construction-zone",
+  "name": "calzone",
   "version": "0.0.1",
   "description": "a no-nonsense wrapper around gulp",
   "main": "build/main/index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "mocha"
   },
   "bin": {
-    "conz": "cli/index.js"
+    "calzone": "cli/index.js"
   },
   "keywords": [],
   "author": "Jonathan Apodaca",

@@ -1,4 +1,4 @@
-construction-zone
+calzone
 =================
 
 A command-line, project-based wrapper around gulp in an attempt to make JavaScript builds more fun and less complicated.
@@ -8,7 +8,7 @@ A command-line, project-based wrapper around gulp in an attempt to make JavaScri
 Install with `npm`:
 
 ```
-npm install -g construction-zone
+npm install -g calzone
 ```
 
 This will expose a command-line utility that can be run with:
@@ -18,18 +18,18 @@ $ conz --help # for example...
 
 ## Overview
 
-`construction-zone` takes build hints from two sources:
+`calzone` takes build hints from two sources:
 
 1. Build configuration defined explicitly in a `.builders.json` file
 2. An `/* @build ... */` annotation in your source file
 
-The program will then create gulp streams and build your files.  By default, `construction-zone` assumes a directory structure like the following:
+The program will then create gulp streams and build your files.  By default, `calzone` assumes a directory structure like the following:
 
 ```
 src/
 	=> all your files...
 build/
-	=> where construction-zone directs gulp.dest() to put files
+	=> where calzone directs gulp.dest() to put files
 ```
 
 This directory structure can be overridden by options in `.builders.json`.
@@ -91,7 +91,7 @@ params: (json-object)
 
 ## Project settings:
 
-You may also override many of `construction-zone`'s settings by creating a `.builders.json` file:
+You may also override many of `calzone`'s settings by creating a `.builders.json` file:
 
 ```
 {
@@ -106,7 +106,7 @@ You may also override many of `construction-zone`'s settings by creating a `.bui
 
 ## Default Builders
 
-`construction-zone` defines a few default builders for your convenience, assuming their appropriate packages are installed in your local `node_modules` directory:
+`calzone` defines a few default builders for your convenience, assuming their appropriate packages are installed in your local `node_modules` directory:
 
 * autoprefixer
 * babel
