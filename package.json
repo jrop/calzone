@@ -4,7 +4,8 @@
   "description": "a no-nonsense wrapper around gulp",
   "main": "build/main/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "prepublish": "cd dsl && make"
   },
   "bin": {
     "calzone": "cli/index.js"
@@ -27,7 +28,8 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-as-promised": "^5.2.0"
+    "chai-as-promised": "^5.2.0",
+    "mocha": "^2.4.5"
   },
   "repository": "jrop/construction-zone"
 }
