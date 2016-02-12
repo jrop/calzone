@@ -38,7 +38,7 @@ const argv = yargs.help('help').alias('help', 'h')
 		description: 'Whether to copy files without the @build annotation to the output directory',
 		type: 'boolean',
 		default: true, // since this option is a flag, we need to explicitly default it to true *here*
-	})
+	}).alias('include-all', 'a')
 
 	.option('exclude', {
 		description: 'Files to exclude when reading from the source directory',
@@ -62,7 +62,7 @@ const options = _.merge({
 
 // load builders:
 options.builders = _.merge(require('./default-builders'), loadLocalFile('.builders.js'))
-options.builders.json = _.mapKeys(loadLocalFile('.builders.json'), (value, file) => {
+options.builders.__json__ = _.mapKeys(loadLocalFile('.builders.json'), (value, file) => {
 	return path.resolve(process.cwd(), file)
 })
 

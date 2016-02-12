@@ -1,6 +1,9 @@
 'use strict'
 
+require('colors')
 const annotation = require('./annotation-parser')
+const co = require('co')
+const events = require('events')
 const joi = require('joi')
 const path = require('path')
 const through2 = require('through2')
@@ -40,15 +43,6 @@ function identityStream() {
 }
 
 //
-// Allows for awaiting a stream to end
-//
-function streamToPromise(stream) {
-	return new Promise((yes, no) => {
-		stream.on('error', no).on('end', yes)
-	})
-}
-
-//
 // Gets and parses the @build annotation from a files contents
 //
 function getAnnotationInfoFromContents(contents) {
@@ -69,7 +63,7 @@ function getAnnotationInfoFromContents(contents) {
 // Gets the build configuration from either the .builders.json or the file annotation
 //
 function getBuildConfig(options, file, contents) {
-	let buildConfig = options.builders.json[file] || getAnnotationInfoFromContents(contents)
+	let buildConfig = options.builders.__json__[file] || getAnnotationInfoFromContents(contents)
 	if (!buildConfig)
 		return Promise.resolve(null)
 
@@ -87,7 +81,39 @@ function getBuildConfig(options, file, contents) {
 	})
 }
 
+//
+// Creates the 'after source' pipe given the input configuration
+//
+const getTransformationInfo = co.wrap(function * (options, file, contents) {
+	const buildConfig = yield getBuildConfig(options, file, contents)
+	const errorEmmitter = new events.EventEmitter()
+
+	const head = identityStream()
+	let tail = head
+	if (buildConfig) {
+		for (const buildStep of buildConfig) {
+			const fn = options.builders[buildStep.type]
+			if (typeof fn != 'function')
+				throw new Error('The builder "' + buildStep.type + '" is not defined')
+
+			const nextPipe = fn.call(tail, buildStep.config)
+			if (!nextPipe || !nextPipe.pipe)
+				throw new Error('The builder ' + buildStep.type + 'did not return a valid stream (occured while building ' + getPathInfo(options, file).name + ')')
+
+			tail = tail.pipe(nextPipe)
+			tail.on('error', e => errorEmmitter.emit('error', e))
+		}
+
+		return { errors: errorEmmitter, head, tail, status: 'built' }
+	} else if (options.includeAll) {
+		return { errors: errorEmmitter, head, tail: head, status: 'copied' }
+	} else {
+		// skip file
+		return { errors: errorEmitter, head: null, tail: null, status: 'skipped' }
+	}
+})
+
 module.exports = {
 	getPathInfo, getGlobsFromOptions, identityStream,
-	streamToPromise, getAnnotationInfoFromContents, getBuildConfig,
+	getAnnotationInfoFromContents, getBuildConfig, getTransformationInfo
 }
