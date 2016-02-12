@@ -3,7 +3,7 @@
 const co = require('co')
 const should = require('chai').should()
 const through2 = require('through2')
-const util = require('../util')
+const util = require('../lib/util')
 
 const testStream = through2.obj((file, enc, cb) => {
 	cb(null, 'transformed')

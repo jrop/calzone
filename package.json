@@ -1,16 +1,16 @@
 {
   "name": "construction-zone",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "a no-nonsense wrapper around gulp",
   "main": "build/main/index.js",
   "scripts": {
     "test": "gulp test"
   },
   "bin": {
-    "conz": "index.js"
+    "conz": "cli/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jonathan Apodaca",
   "license": "ISC",
   "dependencies": {
     "antlr4": "^4.5.2",
@@ -28,5 +28,6 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0"
-  }
+  },
+  "repository": "jrop/construction-zone"
 }

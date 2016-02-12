@@ -1,6 +1,6 @@
 'use strict'
 
-const anno = require('../annotation-parser')
+const anno = require('../lib/annotation-parser')
 
 describe('Annotation parser', () => {
 	it('should parse an empty annotation', () => {
