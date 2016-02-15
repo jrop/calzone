@@ -61,14 +61,14 @@ First, you'll notice that our file declaratively defines how it is intended to b
 
 ## Builders
 
-Builders are defined in your `.builders.js` file.  For example, if you have a LESS file with a build-annotation like `/* @build less */`, you may define a builder like:
+Options (and builders) are defined in your `.builders.js` file.  For example, if you have a LESS file with a build-annotation like `/* @build less */`, you may define a builder like:
 
 ```
 // .builders.js
 var autoprefixer = require('gulp-autoprefixer')
 var less = require('gulp-less')
 
-module.exports = {
+module.exports.builders = {
 	less: function() {
 		return this.pipe(less())
 			.pipe(autoprefixer())
@@ -96,7 +96,7 @@ You may also override many of `calzone`'s settings by creating a `.builders.json
 {
 	"src": "src/directory",
 	"out": "output/directory",
-	"builders": {
+	"files": {
 		"src/index.js": [ { type: "babel" }, { type: "uglify", config: { preserveComments: false } } ],
 		"src/public/web-app.js": [ { type: "webpack" } ]
 	}

@@ -47,18 +47,16 @@ describe('Utilities', () => {
 
 	it('getBuildConfig should return correct data', co.wrap(function * () {
 		let config = yield util.getBuildConfig({
-			builders: {
-				__json__: {
-					'src/myfile.js': [ { type: 'proj', config: { } } ]
-				}
+			files: {
+				'src/myfile.js': [ { type: 'proj', config: { } } ]
 			}
 		}, 'src/myfile.js', '@build shouldBeIgnored')
 		config.should.deep.eql([ { type: 'proj', config: { } } ])
 
-		config = yield util.getBuildConfig({ builders: { __json__: { } } }, 'src/myfile.js', '/* @build file */')
+		config = yield util.getBuildConfig({ files: { } }, 'src/myfile.js', '/* @build file */')
 		config.should.deep.eql([ { type: 'file' } ])
 
-		config = yield util.getBuildConfig({ builders: { __json__: { } } }, 'src/myfile.js', '')
+		config = yield util.getBuildConfig({ files: { } }, 'src/myfile.js', '')
 		should.equal(config, null)
 	}))
 
@@ -66,9 +64,9 @@ describe('Utilities', () => {
 		it('should setup the pipe correctly', co.wrap(function * () {
 			const contents = '/* @build test */ this is my file'
 			const info = yield util.getTransformationInfo({
+				files: { },
 				builders: {
-					test: function() { return this.pipe(testStream) },
-					__json__: { }
+					test: function() { return this.pipe(testStream) }
 				}
 			}, 'my-file.js', contents)
 
@@ -92,9 +90,8 @@ describe('Utilities', () => {
 		it('should scream if there is no builder defined', co.wrap(function * () {
 			const contents = '/* @build test */ this is my file'
 			const infoPromise = util.getTransformationInfo({
-				builders: {
-					__json__: { }
-				}
+				files: { },
+				builders: { }
 			}, 'my-file.js', contents)
 
 			yield infoPromise.should.be.rejectedWith(/not defined/)
@@ -105,9 +102,9 @@ describe('Utilities', () => {
 			const infoPromise = util.getTransformationInfo({
 				src: '',
 				out: '',
+				files: { },
 				builders: {
-					test: function() { return 'This should be an error' },
-					__json__: { }
+					test: function() { return 'This should be an error' }
 				}
 			}, 'my-file.js', contents)
 
