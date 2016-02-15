@@ -1,4 +1,5 @@
 coverage/
+dsl/java/
 dsl/js/
 dsl/out/
 dsl/test

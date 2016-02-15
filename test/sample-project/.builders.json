@@ -2,6 +2,6 @@
 	"includeAll": false,
 	"src": "the_src",
 	"files": {
-		"the_src/my-file.js": [ { "type": "my_builder" } ]
+		"the_src/file1.js": [ { "type": "my_builder" } ]
 	}
 }

@@ -1,5 +1,6 @@
 'use strict'
 
+require('chai').should()
 const anno = require('../lib/annotation-parser')
 
 describe('Annotation parser', () => {
@@ -11,11 +12,11 @@ describe('Annotation parser', () => {
 		anno.parse('@build babel').should.deep.eql([ { type: 'babel' } ])
 	})
 
-	it('should parse an annotation with complex config', () => {
-		anno.parse('@build babel({ presets: [ "es2015" ], plugins: [ [ "transform-async-to-module-method", { module: "co", method: \'wrap\' } ] ] })')
+	it('should parse an annotation with complex params', () => {
+		anno.parse('@build babel(true, { presets: [ "es2015" ], plugins: [ [ "transform-async-to-module-method", { module: "co", method: \'wrap\' } ] ] })')
 			.should.deep.eql([ {
 				type: 'babel',
-				config: {
+				params: [ true, {
 					presets: [ 'es2015' ],
 					plugins: [
 						[ 'transform-async-to-module-method', {
@@ -23,7 +24,7 @@ describe('Annotation parser', () => {
 							method: 'wrap'
 						} ]
 					]
-				}
+				} ]
 			} ])
 	})
 

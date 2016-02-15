@@ -20,10 +20,11 @@ describe('Builder', () => {
 		})
 
 		yield build.run()
-		require('./sample-project/build/my-file').should.eql('Hello Calzone!')
+		require('./sample-project/build/file1').should.eql('Hello Calzone!')
+		require('./sample-project/build/file2').should.eql('Hello Mocha!')
 		
 		chai.expect(function() {
-			require('./sample-project/build/another-file')
+			require('./sample-project/build/file3')
 		}).to.throw(/Cannot find module/)
 
 		yield build.clean()

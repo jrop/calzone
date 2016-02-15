@@ -20,6 +20,6 @@ describe('Options', () => {
 		options.src.should.contain('sample-project/the_src')
 		options.out.should.contain('sample-project/build')
 		options.includeAll.should.eql(false)
-		options.files.should.have.keys(path.resolve(cwd, 'the_src/my-file.js'))
+		options.files.should.have.keys(path.resolve(cwd, 'the_src/file1.js'))
 	})
 })

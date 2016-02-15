@@ -48,10 +48,10 @@ describe('Utilities', () => {
 	it('getBuildConfig should return correct data', co.wrap(function * () {
 		let config = yield util.getBuildConfig({
 			files: {
-				'src/myfile.js': [ { type: 'proj', config: { } } ]
+				'src/myfile.js': [ { type: 'proj' } ]
 			}
 		}, 'src/myfile.js', '@build shouldBeIgnored')
-		config.should.deep.eql([ { type: 'proj', config: { } } ])
+		config.should.deep.eql([ { type: 'proj' } ])
 
 		config = yield util.getBuildConfig({ files: { } }, 'src/myfile.js', '/* @build file */')
 		config.should.deep.eql([ { type: 'file' } ])

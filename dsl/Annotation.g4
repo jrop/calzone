@@ -7,7 +7,9 @@ annotation:
 
 buildSpecs: (buildSpec '|>')* (buildSpec '|>'?);
 
-buildSpec: ID | ID '(' jsonLiteral? ')';
+buildSpec: ID | ID '(' parameterList? ')';
+
+parameterList: (jsonLiteral ',')* jsonLiteral ','?;
 
 /* BEGIN: JSON stuffs: */
 
