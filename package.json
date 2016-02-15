@@ -1,6 +1,6 @@
 {
   "name": "calzone",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a no-nonsense wrapper around gulp",
   "main": "build/main/index.js",
   "scripts": {
