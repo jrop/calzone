@@ -1,6 +1,8 @@
 calzone
 =================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/jrop/calzone.svg)](https://greenkeeper.io/)
+
 A command-line, project-based wrapper around gulp in an attempt to make JavaScript builds more fun and less complicated.
 
 ## Installation
